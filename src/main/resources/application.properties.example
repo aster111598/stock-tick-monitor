@@ -1,0 +1,4 @@
+spring.application.name=stock-tick-monitor
+server.port=8081
+fugle.api.key=yourapikeyhere
+logging.level.com.quant.monitor=DEBUG
