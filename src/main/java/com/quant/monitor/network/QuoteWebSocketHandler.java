@@ -51,6 +51,8 @@ public class QuoteWebSocketHandler extends TextWebSocketHandler {
 				""", apiKey);
 
 		session.sendMessage(new TextMessage(authMsg));
+		
+		log.info("🌐 WebSocket 連線已建立，準備發送身分驗證...");
 		System.out.println("🔑 已發送身分驗證請求...");
 
 		// 2. 依照官方文件訂閱 Trades 頻道 (成交明細)
@@ -66,6 +68,8 @@ public class QuoteWebSocketHandler extends TextWebSocketHandler {
 				""";
 
 		session.sendMessage(new TextMessage(subscribeMsg));
+		
+		log.info("🚀 已送出訂閱請求：台積電、聯發科、鴻海、日月光");
 		System.out.println("🚀 已送出官方標準訂閱請求：台積電、聯發科、鴻海、日月光投控");
 	}
 
@@ -74,8 +78,16 @@ public class QuoteWebSocketHandler extends TextWebSocketHandler {
 		String payload = message.getPayload();
 
 		// 🔍 觀察原始數據（建議開盤前保留，確認格式）
+		log.info("📥 收到原始數據: " + payload);
 		System.out.println("📥 收到原始數據: " + payload);
-
+		
+		// 解析發生錯誤時，或是身分驗證失敗時，使用 warn 或 error
+        if (payload.contains("Invalid authentication credentials")) {
+            log.error("❌ 富果 API 金鑰驗證失敗！請檢查配置。");
+        } else if (payload.contains("Authenticated successfully")) {
+            log.info("✨ 身分驗證成功，開始接收即時行情！");
+        }
+		
 		// 1. 使用升級後的 Parser，它會自動從 JSON 裡抓出對應的 symbol
 		Tick tick = FugleParser.parse(payload);
 
