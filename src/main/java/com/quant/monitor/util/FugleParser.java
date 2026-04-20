@@ -18,6 +18,11 @@ public class FugleParser {
 			// 我們只處理 'trade' (盤中成交) 與 'snapshot' (開盤前的最後狀態)
 			if ("trade".equals(event) || "snapshot".equals(event)) {
 				JsonNode data = root.get("data");
+				
+				// 🛡️ 防禦性檢查：缺少關鍵欄位直接放棄，不拋出 Exception
+	            if (!data.has("symbol") || !data.has("price") || !data.has("size")) {
+	                return null; // 直接忽略
+	            }
 
 				String symbol = data.get("symbol").asText();
 				double price = data.get("price").asDouble();

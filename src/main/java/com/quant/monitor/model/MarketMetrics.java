@@ -1,9 +1,9 @@
-package com.quant.monitor.service;
+package com.quant.monitor.model;
 
-import com.quant.monitor.model.Tick;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.LongAdder;
+import com.quant.monitor.service.TimeWindowQueue;
 
 /**
  * 個股盤中籌碼聚合器 (V2.0 包含滾動時間窗與程式單偵測)
