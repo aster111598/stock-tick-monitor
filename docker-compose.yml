@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # 1. 你的量化引擎
+  quant-monitor:
+      image: quant-monitor:v1
+      container_name: quant-monitor
+      ports:
+        - "8081:8081"
+      environment:
+        - FUGLE_API_KEY=${FUGLE_API_KEY}
+        # 💡 加入以下這兩行：強制設定作業系統與 Java 虛擬機的時區
+        - TZ=Asia/Taipei 
+        - JAVA_TOOL_OPTIONS=-Duser.timezone=Asia/Taipei
+  # 2. 數據庫：Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      # 把我們剛才寫的尋寶圖，掛載進 Prometheus 的肚子裡
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # 3. 視覺化儀表板：Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      # 預設把 admin 密碼設為 admin，方便我們本地測試
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      # 💡 加入這一行！將本機的 ./grafana-data 資料夾，對應到容器內的儲存路徑
+      - ./grafana-data:/var/lib/grafana

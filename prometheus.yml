@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 5s # 為了高頻交易，我們設定每 5 秒去拉取一次數據
+
+scrape_configs:
+  - job_name: 'stock-quant-monitor'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      # 💡 架構師細節：在 Docker 網路中，不需要寫 localhost，
+      # 直接用容器名稱 'quant-monitor' 就能互相通訊！
+      - targets: ['quant-monitor:8081']
